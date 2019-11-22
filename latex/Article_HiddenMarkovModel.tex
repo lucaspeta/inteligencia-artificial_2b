@@ -1,0 +1,307 @@
+\documentclass{article}
+ 
+%encoding
+%--------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%--------------------------------------
+ 
+%Portuguese-specific commands
+%--------------------------------------
+\usepackage[portuguese]{babel}
+%--------------------------------------
+
+\usepackage{graphicx}
+\usepackage{indentfirst}
+
+
+\title{Modelos Ocultos de Markov}
+
+\author{
+Felipe Alves Ferreira Ligabo\\
+\and
+Lucas Ferreira de Almeida\\
+\and
+Sabrina Eloise Nawcki\\
+}
+
+\date{18/11/2019}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\listoffigures
+
+\section{Introdução}
+
+Toda massa de dados pode ser transformada em estatística através de fórmulas matemáticas e agrupamento de informações. Em inteligência artifical a extração de dados de dados é de extrema importância como \mbox{Thomas H. Davenport}, especialista em analytics diz no excerto do The Wall Street Journal: "Seres humanos podem, normalmente, criar um ou dois modelos bons por semana; machine learning pode criar milhares de modelos por semana.".
+
+De forma geral, o modelo de Markov modela os dados e é muito conhecido no uso de aplicações de aprendizagem por padrões e no reconhecimento de padrões temporais, como fala, escrita à mão, reconhecimento de gestos, acompanhamento musical, descargas parciais e bioinformática. 
+
+O objetivo do presente trabalho é desenvolver um trabalho acadêmico de pesquisa com foco em modelos ocultos de Markov, tendo as informações sobre o que é o modelo, quais bibliotecas ajudam no desenvolvimento do modelo na linguagem computacional Python, como essas bibliotecas funcionam, a implementação de uso da biblioteca com um exemplo de problema e quais os resultados da implementação. 
+
+O trabalho é dirigido às pessoas que se interessam em se aprofundar em modelos probabilísticos, especificamente no modelo oculto de Markov. 
+
+Para o desenvolvimento do presente trabalho foram utilizadas pesquisas em publicações científicas e em publicações voltadas à programação em Python utilizando o modelo oculto de Makrov.
+A estrutura do trabalho é dividida em três partes, sendo a primeira parte uma explicação do que é o modelo oculto de Makrov, a segunda parte sendo a implementação em Python e a terceira parte sobre os resultados obtidos através do código implementado. 
+
+\section{Fundamentação Teórica}
+
+Um modelo de Markov é um modelo estocástico que modela dados temporais ou sequenciais, ou seja, dados que são ordenados. Fornecendo uma maneira de modelar as dependências da informação atual com informações anteriores, composto por estados, esquema de transição entre estados,e emissão de saídas (discretas ou contínuas). Com esta implementação podem ser alcançados objetivos como aprender estatísticas de dados sequenciais, fazer previsões ou estimativas e reconhecer padrões. Dele surge o Modelo Oculto de Markov (HMMs), onde os estados do modelo estão ocultos e cada um deles pode emitir uma saída que é observada.
+
+Segundo Jacob Schreiber o Modelo Oculto de Markov é um modelo probabilístico estruturado que forma uma distribuição de probabilidade de sequências, em oposição a símbolos individuais. Possuindo uma estrutura gráfica direcionada em que os nós representam distribuições de probabilidade , enquanto suas arestas representam transições e codificam probabilidades de transição. 
+
+Um Modelo Oculto de Markov pode ser pensado como um modelo geral de mistura com mais uma matriz de transição, em que cada componente no modelo geral de Mistura corresponde a um nó  e a matriz de transição informa a probabilidade de que símbolos adjacentes na transição de sequência sejam gerado de um componente para outro. Um ponto forte é que eles podem modelar sequências de tamamho de variável, enquanto outros modelos geralmente exigem um conjunto de recursos fixos. Sendo amplamente utilizados nas áreas de processamento de linguagem natural para modelar fala, bioinformática para modelar biosequências e robótica para modelar movimento.
+
+\section{Implementação}
+Para exemplificação do modelo oculto de Markov foi implementado um programa em \emph{Python} utilizando duas bibliotecas distintas, a \emph{pomegranate} e a \emph{hmmlearn}, para o mesmo problema. 
+
+\subsection{Problema}
+O problema abordado nessa implementação tem o objetivo de prever qual será o clima de acordo com a ação que uma pessoa faz, usando como massa dados as previsões dos dias anteriores e as respectivas ações feitas nos dias.
+O modelo possui três estados: Sol, Chuva e Nuvens. Para o problema é necessário saber qual a probabilidade do dia iniciar com cada clima citado e o restante do modelo de transição e a distribuição discreta para as ações. Esses dados estão respectivamente nas tabelas ~\ref{tabela_inicio}, ~\ref{tabela_transicoes} e ~\ref{tabela_distribuicao}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|s|n|}
+        \hline
+        Chuva & Sol & Nuvens \\ 
+        \hline \hline
+        0.5 & 0.2 & 0.3 \\ \hline 
+    \end{tabular}
+    \caption{Tabela de inicialização.}
+    \label{tabela_inicio}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|m|c|s|n|}
+        \hline
+        Matriz & Chuva & Sol & Nuvens \\ 
+        \hline \hline
+        Chuva & 0.5 & 0.3 & 0.2 \\ \hline 
+        Sol & 0.35 & 0.45 & 0.2 \\ \hline 
+        Nuvens & 0.2 & 0.3 & 0.5 \\ \hline 
+    \end{tabular}
+    \caption{Tabela de transições.}
+    \label{tabela_transicoes}
+\end{table}
+
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|m|c|s|n|}
+        \hline
+        Matriz & Caminhar & Comprar & Limpar \\ 
+        \hline \hline
+        Chuva & 0.1 & 0.4 & 0.5 \\ \hline 
+        Sol & 0.6 & 0.3 & 0.1 \\ \hline 
+        Nuvens & 0.2 & 0.1 & 0.7 \\ \hline 
+    \end{tabular}
+    \caption{Tabela de distribuição.}
+    \label{tabela_distribuicao}
+\end{table}
+
+\subsection{Código}
+\subsubsection{Biblioteca \emph{Pomegranate}}
+O uso da biblioteca \emph{Pomegranate} é intuitiva e de simples discernimento, pois suas funções são bem nomeadas e a biblioteca recalcula automaticamente possíveis erros do modelo de transição. Abaixo há um  tutorial passo à passo de codificação utilizando a biblioteca.
+\begin{enumerate}
+\label{lista_pomegranate}
+\item Importar a biblioteca
+\begin{verbatim}
+from pomegranate import * 
+\end{verbatim}
+    
+\item Criar o modelo oculto de Markov
+\begin{verbatim}
+modelo2 = HiddenMarkovModel( name="previsao-tempo" )
+\end{verbatim}
+    
+\item Criar os estados com os valores da tabela de distribuição \ref{tabela_distribuicao}
+\begin{verbatim}
+chuva = State( 
+    DiscreteDistribution(
+    { 'caminhar': 0.1, 'comprar': 0.4, 'limpar': 0.5 }
+    ), 
+    name='Chuva' 
+)
+sol = State( 
+    DiscreteDistribution(
+        { 'caminhar': 0.6, 'comprar': 0.3, 'limpar': 0.1 }
+    ),
+    name='Sol' 
+)
+nuvens = State( 
+    DiscreteDistribution(
+        { 'caminhar': 0.2, 'comprar': 0.1, 'limpar': 0.7 }
+    ), 
+    name='Nuvens'
+)
+\end{verbatim}
+
+\item Criar o modelo de transição inicial da tabela de inicialização \ref{tabela_inicio}
+\begin{verbatim}
+modelo2.add_transition( 
+    modelo2.start, chuva, 0.5
+)
+modelo2.add_transition( 
+    modelo2.start, sol, 0.2
+)
+modelo2.add_transition(
+    modelo2.start, nuvens, 0.3 
+)
+\end{verbatim}
+
+\item Criar o restante do modelo de transição da tabela de transições \ref{tabela_transicoes}. Note que a biblioteca necessita que seja subtraído 0.5 dos valores da tabela e que se adione o modelo de transição final
+\begin{verbatim}
+modelo2.add_transition( 
+    chuva, chuva, 0.45 
+)
+modelo2.add_transition( 
+    chuva, sol, 0.25
+)
+modelo2.add_transition(
+    chuva, nuvens, 0.15
+)
+modelo2.add_transition(
+    sol, chuva, 0.3 
+)
+modelo2.add_transition(
+    sol, sol, 0.4
+)
+modelo2.add_transition(
+    sol, nuvens, 0.15 
+) 
+modelo2.add_transition(
+    nuvens, chuva, 0.15
+)
+modelo2.add_transition(
+    nuvens, sol, 0.25
+)
+modelo2.add_transition(
+    nuvens, nuvens, 0.45 
+)
+
+modelo2.add_transition(
+    chuva, modelo2.end, 0.15
+)
+modelo2.add_transition(
+    sol, modelo2.end, 0.15 
+)
+modelo2.add_transition(
+    nuvens, modelo2.end, 0.15 
+)
+\end{verbatim}
+
+\item Chamar a função bake
+\begin{verbatim}
+modelo2.bake( verbose=True )
+\end{verbatim}
+
+\item Criar a sequência a ser observada
+\begin{verbatim}
+sequencia = [
+    'comprar', 'limpar', 'caminhar', 
+    'limpar', 'limpar', 'caminhar', 'limpar'
+]
+\end{verbatim}
+
+\end{enumerate}
+ 
+ 
+\subsubsection{Resultados}
+Depois de criar o modelo, a biblioteca possui funções para calcular as probabilidades resultantes dos dados obtidos. Abaixo podemos visualizar como utilizar essas funções e quais os resultados obtidos a partir do uso de cada uma.
+
+\begin{enumerate}
+    
+\item Criar funções resultantes
+\begin{verbatim}
+print (math.e**modelo2.forward( sequencia )[ len(sequencia), modelo2.end_index ]) 
+
+print (math.e**modelo2.forward_backward( sequencia )[1][ 2, modelo2.states.index( chuva ) ]) 
+
+print (math.e**modelo2.backward( sequencia )[ 3, modelo2.states.index( sol ) ]) 
+
+print (" ".join( state.name for i, state in modelo2.maximum_a_posteriori( sequencia )[1] )) 
+\end{verbatim}
+
+\end{enumerate}
+ 
+\subsubsection{Biblioteca \emph{Hmmlearn}}
+Assim como a biblioteca \emph{Pomegranate} o uso da biblioteca \emph{Hmmlearn} é intuitiva, pois suas funções são bem nomeadas, porém, a biblioteca não consegue recalcular os possíveis erros do modelo de transição e os estados são um vetor, sendo mais difícil a visualização dos resultados. Abaixo há um  tutorial passo à passo de codificação utilizando a biblioteca.
+\begin{enumerate}
+\label{lista_hmmlearn}
+\item Importar a biblioteca
+\begin{verbatim}
+from hmmlearn import hmm
+\end{verbatim}
+    
+\item Criar o modelo oculto de Markov
+\begin{verbatim}
+modelo1 = hmm.MultinomialHMM(
+    n_components = 3
+) #estados -> chuva, sol, nuvens
+\end{verbatim}
+
+\item Criar o modelo de transição inicial da tabela de inicialização \ref{tabela_inicio}
+\begin{verbatim}
+modelo1.startprob_ = numpy.array(
+    [0.5, 0.2, 0.3]
+) #probabilidades de chuva, sol, nuvens
+\end{verbatim}
+
+\item Criar o restante do modelo de transição da tabela de transições \ref{tabela_transicoes}
+\begin{verbatim}
+modelo1.transmat_ = numpy.array([
+    [0.5, 0.3, 0.2], #[chuva -> chuva, sol, nuvens]    
+    [0.35, 0.45, 0.2], #[sol -> chuva, sol, nuvens] 
+    [0.2, 0.3, 0.5] #[nuvens -> chuva, sol, nuvens] 
+])
+\end{verbatim}
+
+\item Criar os estados com os valores da tabela de distribuição \ref{tabela_distribuicao}
+\begin{verbatim}
+
+modelo1.emissionprob_ = numpy.array([
+    [0.1, 0.4, 0.5], #probabilidade de chuva em caminhar, comprar e limpar
+    [0.6, 0.3, 0.1], #probabilidade de sol em caminhar, comprar e limpar
+    [0.2, 0.1, 0.7] #probabilidade de nuvens em caminhar, comprar e limpar
+])   
+\end{verbatim}
+
+\item Criar a sequência a ser observada
+\begin{verbatim}
+logprob, seq = modelo1.decode(
+    numpy.array([[1,2,0]]
+    ).transpose()) #{“comprar”, “limpar”, “caminhar”}
+
+\end{verbatim}
+
+\end{enumerate}
+ 
+\subsubsection{Resultados}
+Novamente, assim como a biblioteca analisada anteriormente, depois de criar o modelo, a biblioteca \emph{Hmmlearn} possui funções para calcular as probabilidades resultantes dos dados obtidos. Abaixo podemos visualizar como utilizar essas funções e quais os resultados obtidos a partir do uso de cada uma.
+\begin{enumerate}
+    
+\item Criar as funções resultado
+
+\begin{verbatim}
+math.exp(modelo1.score(numpy.array([[0]]))) #primeira observacao sendo “caminhar” eh a multiplicacao do estado inicia; cp, a matriz de probabilidade 0.2 x 0.1 + 0.5 x 0.6  + 0.3 x 0.5 = 0.30 (30%)
+# 0.30000000000000004
+math.exp(modelo1.score(numpy.array([[1]])))
+# 0.3606
+math.exp(modelo1.score(numpy.array([[2]])))
+# 0.3400000000000001
+math.exp(modelo1.score(numpy.array([[2,2,2]])))
+# 0.04590400000000001
+
+print(math.exp(logprob))
+print(seq) #{“chuva”, “nuvens”, “sol”}
+
+\end{verbatim}
+
+\end{enumerate}
+\section{Conclusão}
+
+\end{document}
