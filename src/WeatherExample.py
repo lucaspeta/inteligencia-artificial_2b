@@ -18,22 +18,24 @@ modelo1.emissionprob_ = numpy.array([
     [0.6, 0.3, 0.1],                                #probabilidade de sol em caminhar, comprar e limpar
     [0.2, 0.1, 0.7]                                 #probabilidade de nuvens em caminhar, comprar e limpar
     ])   
-math.exp(modelo1.score(numpy.array([[0]]))) #primeira observacao sendo “caminhar” eh a multiplicacao do estado inicia; cp, a matriz de probabilidade 0.2 x 0.1 + 0.5 x 0.6  + 0.3 x 0.5 = 0.30 (30%)
-# 0.30000000000000004
-math.exp(modelo1.score(numpy.array([[1]])))
-# 0.3606
-math.exp(modelo1.score(numpy.array([[2]])))
-# 0.3400000000000001
-math.exp(modelo1.score(numpy.array([[2,2,2]])))
-# 0.04590400000000001
+print(math.exp(modelo1.score(numpy.array([[0]])))) #primeira observacao sendo “caminhar” eh a multiplicacao do estado inicia; cp, a matriz de probabilidade 0.2 x 0.1 + 0.5 x 0.6  + 0.3 x 0.5 = 0.30 (30%)
+#0.23
+print(math.exp(modelo1.score(numpy.array([[1]]))))
+#0.29000000000000004
+print(math.exp(modelo1.score(numpy.array([[2]]))))
+#0.48
+print(math.exp(modelo1.score(numpy.array([[2,2,2]]))))
+#0.095256
 
 logprob, seq = modelo1.decode(numpy.array([[1,2,0]]).transpose()) #{“comprar”, “limpar”, “caminhar”}
 print(math.exp(logprob))
-print(seq) #{“chuva”, “nuvens”, “sol”}
+# 0.009
+print(seq) #{“chuva”, “chuva”, “sol”}[0 0 1]
 
 logprob, seq = modelo1.decode(numpy.array([[2,2,2]]).transpose()) #{“limpar”, “limpar”, “limpar”}
-print(math.exp(logprob))
-print(seq) #{“nuvens”, “nuvens”, “nuvens”}
+print(math.exp(logprob)) 
+# 0.025724999999999994
+print(seq) #{“nuvens”, “nuvens”, “nuvens”} [2 2 2]
 
 from pomegranate import *
 
@@ -66,13 +68,13 @@ modelo2.bake( verbose=True )
 sequencia = ['comprar', 'limpar', 'caminhar', 'limpar', 'limpar', 'caminhar', 'limpar' ]
 
 print (math.e**modelo2.forward( sequencia )[ len(sequencia), modelo2.end_index ]) #Now lets check the probability of observing this sequencia.
-#1.8545269908e-05
+# 3.71232063676406e-05
 
 print (math.e**modelo2.forward_backward( sequencia )[1][ 2, modelo2.states.index( chuva ) ]) #Then the probability that Bob will be cleaning a step 3 in this sequencia.
-#0.912099070419
+# 0.1418166223832125
 
 print (math.e**modelo2.backward( sequencia )[ 3, modelo2.states.index( sol ) ]) #The probability of the sequencia occurring given it is sol at step 4 in the sequencia.
-#0.0004459435
+# 0.0013228796250000004
 
 print (" ".join( state.name for i, state in modelo2.maximum_a_posteriori( sequencia )[1] )) #Finally the probable series of states given the above sequencia.
-#sol chuva chuva chuva chuva sol chuva
+# Chuva Chuva Sol Nuvens Nuvens Sol Nuvens
